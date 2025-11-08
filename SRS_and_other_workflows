@@ -1,39 +1,25 @@
-# Software Requirements Specification (SRS) for HierarchyFlow: Hierarchical Data Collection & Reporting Platform
+# Software Requirements Specification (SRS) for VisitWise: Hierarchical Data Collection & Reporting Platform
 
-**Document Version:** 1.4 (Updated for Template-Based Forms)  
+**Document Version:** 1.5 (Renamed and Updated for Template-Based Forms)  
 **Date:** November 08, 2025  
 **Prepared By:** [Your Name] – Project Lead  
 **Prepared For:** Development Team (Full-Stack: Next.js with Existing UI Prototype)  
 **Approval Signatures:** ________________________ (Stakeholder) | ________________________ (Team Lead)  
 
-**Revision Notes:** This version enhances the forms module to support template-based designs for different modes (e.g., predefined templates for domains like Energy with MW tables, Tourism with visitor stats/festivals). It also enables custom template creation (e.g., Super Admins or PMO can define new modes/schemas via a simple editor). This builds on the existing UI prototype (e.g., extend Form component with template selector). The updated architecture diagram is referenced with template mappings (e.g., "Report Gen Service" for mode-specific generation). No code or schemas included; AI tools will derive these during implementation, ensuring UI preservation.
-
-## Version History and Change Log
-
-| Version | Date       | Author       | Description of Changes |
-|---------|------------|--------------|------------------------|
-| 1.0    | 2025-01-01 | Project Lead | Initial draft of SRS. |
-| 1.1    | 2025-03-15 | Project Lead | Added functional requirements for authentication and workflow. |
-| 1.2    | 2025-05-20 | Project Lead | Incorporated non-functional requirements and free resource mappings. |
-| 1.3    | 2025-07-10 | Project Lead | Updated for AI integration and dashboard enhancements. |
-| 1.4    | 2025-11-08 | Project Lead | Enhanced forms module with template-based designs and custom template creation. |
-| 1.5    | [Current Date] | AI Assistant | Added comprehensive documentation, version history, change log, and detailed technical specifications for improved clarity and maintainability. |
-
-**Backward Compatibility Notes:** All updates in this document maintain backward compatibility with previous versions. No breaking changes have been introduced; enhancements are additive and do not alter existing functional or non-functional requirements. Existing API endpoints, data models, and workflows remain supported without modification. Any new features (e.g., custom templates) are optional and do not affect legacy operations.
+**Revision Notes:** This version renames the application from "HierarchyFlow" to **VisitWise**, reflecting a focus on tourism and visit-related data collection (e.g., visitor stats, profiles for UTs like Andaman & Nicobar). Enhancements to the forms module support template-based designs for different modes (e.g., predefined templates for domains like Energy with MW tables, Tourism with visitor stats/festivals). It also enables custom template creation (e.g., Super Admins or PMO can define new modes/schemas via a simple editor). This builds on the existing UI prototype (e.g., extend Form component with template selector). The updated architecture diagram is referenced with VisitWise mappings (e.g., "Report Gen Service" for mode-specific generation). No code or schemas included; AI tools will derive these during implementation, ensuring UI preservation.
 
 ---
 
 ## 1. Introduction
 
 ### 1.1 Purpose
-This Software Requirements Specification (SRS) defines the functional and non-functional requirements for **HierarchyFlow**, a web-based platform designed to streamline hierarchical data collection, approval, and consolidation workflows in large-scale organizational structures, such as government reporting systems (e.g., NITI Aayog-inspired state/UT profiles). The platform addresses inefficiencies in manual processes like email-based DOCX exchanges by automating request propagation, form-based data entry, multi-level merges, deadline monitoring, and AI-assisted insights.
+This Software Requirements Specification (SRS) defines the functional and non-functional requirements for **VisitWise**, a web-based platform designed to streamline hierarchical data collection, approval, and consolidation workflows in large-scale organizational structures, such as government reporting systems (e.g., NITI Aayog-inspired state/UT profiles). The platform addresses inefficiencies in manual processes like email-based DOCX exchanges by automating request propagation, form-based data entry, multi-level merges, deadline monitoring, and AI-assisted insights.
 
 The primary goals are to:
 - Ensure timely, accurate data flow from top (PMO) to bottom (Div YP) and back, with branching for domains (e.g., Energy, Tourism).
 - Generate structured reports (e.g., mirroring Andaman & Nicobar Energy and Tourism profiles) dynamically from user inputs using template-based forms for different modes.
 - Provide oversight tools for Super Admins to monitor compliance across states/UTs.
 - Leverage Next.js for full-stack development, preserving the existing UI prototype while implementing backend via API routes; Use free-tier resources for development and initial deployment to minimize costs during startup, focusing on simple, manual setups and key-based AI access.
-- Enhance documentation for better maintainability, including detailed technical specs and version control.
 
 This SRS serves as the foundational blueprint for implementation, guiding the team in building a scalable MVP while deferring detailed technical schemas (e.g., database models, API contracts) to iterative design phases handled by AI-assisted code generation tools. The existing Next.js UI (e.g., pages, components) remains untouched, with backend enhancements integrated seamlessly.
 
@@ -46,8 +32,7 @@ This SRS serves as the foundational blueprint for implementation, guiding the te
 - Deadline-driven alert system (in-app, email, SMS) with escalation.
 - AI chatbot for queries and auto-suggestions (e.g., summarizing deficits or generating reform bullets), using Gemini API key for free access.
 - Role-tailored dashboards and analytics (e.g., progress heatmaps, overdue counts), building on existing Dashboard skeletons.
-- Integration with free resources: MongoDB Atlas Atlas (free tier for DB and GridFS storage), Vercel (free hosting with manual deploys for Next.js), SendGrid free tier (emails), Twilio trial (SMS), Gemini API (free key-based calls).
-- Detailed technical specifications for system architecture, data models, and API endpoints.
+- Integration with free resources: MongoDB Atlas (free tier for DB and GridFS storage), Vercel (free hosting with manual deploys for Next.js), SendGrid free tier (emails), Twilio trial (SMS), Gemini API (free key-based calls).
 
 **Out of Scope:**
 - Mobile native app (web-responsive only).
@@ -73,7 +58,7 @@ This SRS serves as the foundational blueprint for implementation, guiding the te
 ### 1.4 References
 - Provided Documents: Andaman & Nicobar Energy Division Report (31.07.2025) – Sample for power stats tables; Tourism & Culture Profile – Sample for visitor growth and festival lists.
 - Existing UI Prototype: Teammate's Next.js build (e.g., `/app/login/page.tsx`, `/components/Form.tsx` – to remain intact; Extend for template selector).
-- Updated Diagram: "HierarchyFlow Architecture" (edited visual: Incorporates "Warranty" for user layer safeguards, "Deer keyol" as role-key mappings, and "AI GENERATED" for dynamic components; Next.js API routes map to "Workflow Service").
+- Updated Diagram: "VisitWise Architecture" (edited visual: Incorporates "Warranty" for user layer safeguards, "Deer keyol" as role-key mappings, and "AI GENERATED" for dynamic components; Next.js API routes map to "Workflow Service").
 - Standards: IEEE Std 830-1998 (SRS Template); WCAG 2.1 (Accessibility).
 - Free Resources: MongoDB Atlas Documentation (Free Tier + GridFS Setup); Vercel Next.js Guide (Manual Deploy); Google AI Studio Gemini API Quickstart (Free Key Generation).
 
@@ -85,12 +70,12 @@ Section 2 describes the overall product perspective and functions, integrating t
 ## 2. Overall Description
 
 ### 2.1 Product Perspective
-HierarchyFlow positions itself as a free-to-start, open-source-inspired workflow tool tailored for hierarchical bureaucracies, evolving from ad-hoc tools like Google Forms + Sheets. It differentiates by:
+VisitWise positions itself as a free-to-start, open-source-inspired workflow tool tailored for hierarchical bureaucracies, evolving from ad-hoc tools like Google Forms + Sheets. It differentiates by:
 - Enforcing multi-level approvals/merges to prevent data silos (e.g., combining Energy MW tables with Tourism visitor stats into a unified UT profile).
 - Incorporating real-world samples (e.g., CEA-sourced Installed Capacity tables) for domain-specific forms via templates.
 - Starting lean with Next.js full-stack (UI intact, backend as API routes) and free cloud services with manual deploys to validate MVP before scaling, as visualized in the updated diagram's "External Services" block (e.g., free SendGrid/Twilio for notifications, no advanced storage).
 
-Similar systems (e.g., Airtable workflows) lack built-in hierarchy branching and AI; HierarchyFlow fills this gap affordably, with the diagram's "Warranty" layer ensuring user trust through free-tier reliability and key-based AI access.
+Similar systems (e.g., Airtable workflows) lack built-in hierarchy branching and AI; VisitWise fills this gap affordably, with the diagram's "Warranty" layer ensuring user trust through free-tier reliability and key-based AI access.
 
 ### 2.2 Product Functions
 High-level functions include:
@@ -123,7 +108,6 @@ All users: Basic computer literacy; Access via modern browsers (Chrome/Edge). Di
 - Data: JSON schemas for forms/templates (AI-generated); GridFS for generated docs (free in Atlas).
 - Languages: TypeScript (full-stack) for consistency.
 - Diagram Constraints: "AI GENERATED" elements (e.g., RAG Pipeline) must use free Gemini API key; "Warranty" implies free monitoring via Vercel Analytics; Manual deploys only (e.g., Vercel CLI commands, no pipelines); Templates stored as JSON in MongoDB.
-- Version Control: All document updates ensure backward compatibility as detailed in the Version History section. Implementation must use Git for code versioning, with branches for features and tags for releases matching SRS versions.
 
 ### 2.6 Assumptions and Dependencies
 - Assumptions: Users have email/SMS for alerts; Stable internet (no offline-first); Existing Next.js UI prototype is deployable as-is.
@@ -151,241 +135,44 @@ All users: Basic computer literacy; Access via modern browsers (Chrome/Edge). Di
 - Email/SMS via free tiers; No VoIP. Diagram's "Notifications Service" (Email/SMS, WebSockets) aligns.
 
 ### 3.2 Functional Requirements
-Organized by module; Prioritized (Must-Have for MVP). Diagram mappings added for traceability; Backend via Next.js API routes. All requirements cross-reference relevant sections (e.g., data models in 4.2, APIs in 4.3).
+Organized by module; Prioritized (Must-Have for MVP). Diagram mappings added for traceability; Backend via Next.js API routes.
 
 #### 3.2.1 Authentication Module (Must-Have)
-- **FR-01:** Users shall log in with username and password; System issues a JWT token with role, state, and branch claims, valid for 24 hours. Token must be stored securely on the client-side. [Cross-ref: Section 4.2 User Model; Diagram: Auth Service – JWT/RBAC/Sessions; Implement as /api/auth/route.ts (See 4.3)]
+- FR-01: Users log in with username/password; Issue JWT with role/state/branch claims (24h expiry). [Diagram: Auth Service – JWT/RBAC/Sessions; Implement as /api/auth/route.ts]
+- FR-02: RBAC enforces access (e.g., Div YP can only submit forms for their branch; Middleware in API routes).
+- FR-03: Logout blacklists token; Session restore via refresh. [Free: Redis free tier for blacklisting]
 
-**Validation Criteria:**
-- Username: Exists in database, non-empty.
-- Password: Matches hashed value, minimum complexity (8 chars, mix case/number).
-
-**Testing Procedures:**
-- Unit Test: Login function with valid/invalid credentials.
-- E2E Test: UI login form, successful login redirects to dashboard, invalid shows error.
-
-- **FR-02:** RBAC shall enforce access controls based on user role (e.g., Div YP restricted to form submission for their assigned branch). Middleware in API routes must validate JWT and permissions before processing requests. [Cross-ref: Section 3.3.2 Security; Diagram: Auth Service]
-
-**Validation Criteria:**
-- JWT: Valid, not expired, signature matches.
-- Permissions: Role matches required for endpoint.
-
-**Testing Procedures:**
-- Unit Test: Middleware with mocked JWTs (valid, invalid, wrong role).
-- E2E Test: Attempt access to restricted pages, verify 403 errors.
-
-- **FR-03:** Logout shall blacklist the token to prevent further use; Session restore via refresh token mechanism, limited to 7 days inactivity. [Cross-ref: Free Redis tier for blacklisting in Section 3.3.4]
-
-**Validation Criteria:**
-- Token: Currently valid before blacklisting.
-- Refresh: Within 7 days, valid refresh token.
-
-**Testing Procedures:**
-- Unit Test: Blacklist and check if token is invalid.
-- E2E Test: Logout, attempt re-use of token, verify denial.
-
-- **FR-04:** PMO shall create requests with mandatory fields: infoNeed (string, max 500 chars), timeline (date, must be > current date + 3 days), targets (arrays of valid states and branches). System validates inputs before saving. [Cross-ref: Section 4.2 Request Model; Diagram: Workflow Service – Request/Forward/Approve; /api/workflows/route.ts (See 4.3)]
-
-**Validation Criteria:**
-- infoNeed: Non-empty string, length 1-500 characters.
-- timeline: Valid future date, at least 3 days ahead.
-- targets: Arrays must contain existing states/branches from database.
-
-**Testing Procedures:**
-- Unit Test: Mock input validation function to check valid/invalid cases.
-- E2E Test: Simulate PMO login, create request with invalid data (expect error), then valid (expect success and database entry).
-
-**Detailed Procedure:**
-1. PMO logs in and navigates to the request creation page.
-2. Fills in request details: infoNeed, timeline, select targets (states and branches).
-3. System validates: Timeline must be at least 3 days in future; Targets must be valid.
-   - Decision Point: If invalid, display error message and prompt correction.
-   - Error Handling: Log validation errors; Prevent submission until corrected.
-4. On submit, system saves request to database and propagates to initial approvers (e.g., CEO NITI).
-5. Send notifications via WebSockets and email/SMS.
-
-- **FR-05:** Upon approval, requests shall auto-propagate to the next hierarchical level (e.g., CEO NITI approval forwards to State Advisor); System notifies relevant users via WebSockets in role-specific rooms. Propagation must handle branching for multiple states/domains without data loss. [Cross-ref: Section 3.1.4 Communications; Diagram: Workflow Service]
-
-**Validation Criteria:**
-- Approval: Must be from authorized role; Notes optional, sanitized (length <1000 chars, no scripts).
-- Propagation: Next level must exist in hierarchy; Branching arrays must match targets.
-
-**Testing Procedures:**
-- Unit Test: Simulate approval with mock hierarchy, verify status update and notifications.
-- E2E Test: Create request, approve through levels, check for correct forwarding and no data loss.
-
-**Detailed Procedure:**
-1. Approver receives notification and views request in their dashboard.
-2. Reviews details and adds notes if needed.
-3. Chooses to approve or reject.
-   - Decision Point: If approve, system updates status and forwards to next level (e.g., from CEO to State Advisor).
-   - If reject, revert to previous submitter with reasons.
-   - Error Handling: If network issue during propagation, retry up to 3 times; Alert admin if fails.
-4. Notify all relevant parties via WS rooms.
-
-- **FR-06:** Roles view/filter tasks (e.g., HOD: GET pending forms for state-branch; Paginated, sorted by deadline).
-
-**Validation Criteria:**
-- Filters: Valid status enums, date ranges, search strings (escaped for SQL injection).
-- Pagination: Positive integers for page/size, defaults applied.
-
-**Testing Procedures:**
-- Unit Test: Query function with various filters, assert correct results.
-- E2E Test: Login as HOD, apply filters, verify displayed tasks match expectations.
-
-**Detailed Procedure:**
-1. User accesses dashboard filtered by role.
-2. System queries database for pending tasks matching user's role/state/branch.
-3. Apply filters: status, deadline, search.
-   - Decision Point: If no tasks, display message; Else, paginate results (10 per page).
-   - Error Handling: If query fails, show fallback message and log error.
-4. Sort by deadline ascending.
-
-- **FR-07:** Approvals include notes; Reject reverts status + alerts submitter.
-
-**Validation Criteria:**
-- Notes: Optional string, max 1000 chars.
-- Rejection: Must confirm; Status reverts to previous.
-
-**Testing Procedures:**
-- Unit Test: Approval/reject functions, check status changes and alerts.
-- E2E Test: Submit approval with notes, reject and verify revert/alert.
-
-**Detailed Procedure:**
-1. During review, approver enters notes.
-2. On reject, system reverts request status and alerts original submitter.
-   - Decision Point: Confirm rejection to prevent accidental actions.
-   - Error Handling: Ensure notes are saved even if alert fails; Retry alert.
+#### 3.2.2 Workflow Module (Must-Have)
+- FR-04: PMO creates requests (fields: infoNeed, timeline > now+3 days, targets: states/branches arrays). [Diagram: Workflow Service – Request/Forward/Approve; /api/workflows/route.ts]
+- FR-05: Requests auto-propagate on approval (e.g., CEO NITI approves → Branch to Advisor; WS notify relevant rooms).
+- FR-06: Roles view/filter tasks (e.g., HOD: GET pending forms for state-branch; Paginated, sorted by deadline).
+- FR-07: Approvals include notes; Reject reverts status + alerts submitter.
 
 #### 3.2.3 Forms & Document Generation Module (Must-Have)
-- **FR-08:** System shall load domain-specific templates via GET /api/templates/[mode], returning a JSON schema with predefined sections (e.g., for Energy mode: table with headers ['Category', 'Andaman MW', 'India MW'], validation rules for numeric inputs). UI must include a mode selector dropdown to switch templates dynamically. Templates must be extensible without code changes. [Cross-ref: Section 4.2 Form Template Model; Diagram: Report Gen Service; /api/templates/route.ts (See 4.3)]
-
-**Validation Criteria:**
-- Mode: String matching existing template IDs.
-- Schema Response: Valid JSON, no missing required fields.
-
-**Testing Procedures:**
-- Unit Test: Endpoint handler for valid/invalid modes.
-- E2E Test: Select mode in UI, verify form renders correctly.
-
-- **FR-09:** Div YP shall submit forms using the selected template; System validates data against schema (e.g., required fields, data types), generates DOCX with structured content (tables, lists, footnotes), and stores in GridFS. Submission must include timestamp and submitter ID. [Cross-ref: Section 4.2 Report Model; Diagram: Report Gen Service]
-
-**Validation Criteria:**
-- Data: Matches schema (types, required, min/max values).
-- Generation: DOCX must be valid, <10MB.
-
-**Testing Procedures:**
-- Unit Test: Validation and generation functions with sample data.
-- E2E Test: Fill and submit form, check stored doc and metadata.
-
-- **FR-10:** HOD/YP shall consolidate by selecting child forms; System auto-merges data (e.g., average numeric fields like MW, concatenate lists), generates updated DOCX, and allows manual overrides for conflicts. Merge must preserve original data integrity. [Cross-ref: Section 3.2.2 FR-07 for approvals]
-
-**Validation Criteria:**
-- Selections: Valid child form IDs belonging to user.
-- Merge: No data type mismatches; Conflicts flagged.
-
-**Testing Procedures:**
-- Unit Test: Merge logic with conflicting data.
-- E2E Test: Select forms, merge, override, verify output.
-
-- **FR-11:** Users shall preview and download generated documents (e.g., iframe for DOCX preview, PDF export via server-side conversion). Downloads must be tracked for auditing. [Cross-ref: Free GridFS in Section 3.3.4]
-
-**Validation Criteria:**
-- Document ID: Exists in GridFS.
-- Access: User has permission (e.g., owner or approver).
-
-**Testing Procedures:**
-- Unit Test: Preview/download endpoints.
-- E2E Test: Generate doc, preview, download, check audit log.
-
-- **FR-19:** Super Admin/PMO shall create custom templates via POST /api/templates/custom, defining JSON sections (e.g., fields, validations); System saves to database and makes available for selection. Editor must include validation for schema integrity. [Cross-ref: Section 4.2 Form Template Model; Diagram: AI/ML Layer]
-
-**Validation Criteria:**
-- JSON Schema: Valid structure, no duplicate fields.
-- Uniqueness: Mode name not existing.
-
-**Testing Procedures:**
-- Unit Test: POST handler with valid/invalid JSON.
-- E2E Test: Create template in editor, save, load in form.
+- FR-08: Load domain schemas as templates for different modes (e.g., GET /api/templates/Energy → JSON template with predefined sections like table for Installed Capacity: headers ['Category', 'Andaman MW', 'India MW'], sample rows; Support mode selector in UI to switch templates). [Diagram: Report Gen Service – AI Report/PDF Gen; /api/templates/route.ts]
+- FR-09: Div YP submits forms using selected template (validate data matches template schema; Generate DOCX with sections/tables/footnotes based on mode; Store in GridFS free tier; Extend existing Form component with template loader).
+- FR-10: HOD/YP consolidate (select child forms; Auto-merge e.g., avg MW from Energy mode templates, concat lists from Tourism; Gen updated DOCX using merged template).
+- FR-11: Previews/downloads (e.g., iframe for DOCX; Export PDF via free Puppeteer). [Free: GridFS in Atlas for storage]
+- FR-19: Super Admin/PMO creates custom templates (e.g., POST /api/templates/custom → Define new mode with JSON sections like tables/lists; Save to MongoDB for reuse; UI editor in existing dashboard). [Diagram: AI/ML Layer for dynamic generation support]
 
 #### 3.2.4 Alerts & Deadlines Module (Must-Have)
-- **FR-12:** Set deadlines on requests/forms (default: timeline -3 days for drafts). [Diagram: Notification Service – Email/SMS, WebSockets; /api/notifications/route.ts]
-
-**Validation Criteria:**
-- Deadline: Valid date, before timeline, after creation.
-- Default: Automatically applied if not set.
-
-**Testing Procedures:**
-- Unit Test: Deadline setter with various dates.
-- E2E Test: Create request, verify default deadline.
-
-- **FR-13:** Hourly scans trigger alerts (e.g., if overdue on Nov 08: Email "Engage: Andaman Tourism due" + SMS short-link).
-
-**Validation Criteria:**
-- Overdue: Current time > deadline.
-- Alert Content: Personalized, includes link.
-
-**Testing Procedures:**
-- Unit Test: Scan function identifies overdues correctly.
-- Integration Test: Trigger scan, verify email/SMS sent.
-
-- **FR-14:** Escalation: +24h overdue → Notify up-level (e.g., YP pings HOD); In-app toasts via WS. [Free: SendGrid/Twilio tiers]
-
-**Validation Criteria:**
-- Escalation Time: Exactly +24h post-deadline.
-- Recipients: Correct upper-level roles.
-
-**Testing Procedures:**
-- Unit Test: Escalation logic timing and recipients.
-- E2E Test: Simulate overdue, check escalated notifications.
+- FR-12: Set deadlines on requests/forms (default: timeline -3 days for drafts). [Diagram: Notification Service – Email/SMS, WebSockets; /api/notifications/route.ts]
+- FR-13: Hourly scans trigger alerts (e.g., if overdue on Nov 08: Email "Engage: Andaman Tourism due" + SMS short-link).
+- FR-14: Escalation: +24h overdue → Notify up-level (e.g., YP pings HOD); In-app toasts via WS. [Free: SendGrid/Twilio tiers]
 
 #### 3.2.5 AI Module (Nice-to-Have for MVP)
-- **FR-15:** Chatbot queries data (e.g., "Andaman Energy deficit?" → "5.7% – Cite CEA; Suggest: LNG plant"). [Diagram: Chatbot Service – RAG/Vector/Query; AI/ML Layer – RAG Pipeline/Document Ingestion; /api/ai/route.ts with Gemini key]
-
-**Validation Criteria:**
-- Query: Non-empty string, <500 chars.
-- Response: From Gemini API, sanitized for safety.
-
-**Testing Procedures:**
-- Unit Test: API call with mock Gemini response.
-- E2E Test: Send query via chat UI, verify response.
-
-- **FR-16:** Auto-generate content (e.g., button in form: "Suggest reforms" → Bullets for Tourism boosts like "Eco-resorts").
-
-**Validation Criteria:**
-- Context: Valid form data provided.
-- Generation: Relevant to domain, <1000 chars.
-
-**Testing Procedures:**
-- Unit Test: Generation function with sample context.
-- E2E Test: Click suggest button, insert generated content.
+- FR-15: Chatbot queries data (e.g., "Andaman Energy deficit?" → "5.7% – Cite CEA; Suggest: LNG plant"). [Diagram: Chatbot Service – RAG/Vector/Query; AI/ML Layer – RAG Pipeline/Document Ingestion; /api/ai/route.ts with Gemini key]
+- FR-16: Auto-generate content (e.g., button in form: "Suggest reforms" → Bullets for Tourism boosts like "Eco-resorts").
 
 #### 3.2.6 Dashboards & Analytics Module (Must-Have)
-- **FR-17:** Role views (e.g., Super Admin: Aggregates table – States | Branches | Overdues | Completion %; SSR on existing Dashboard page). [Diagram: Analytics Service – Dashboard/Metrics; /api/analytics/route.ts]
-
-**Validation Criteria:**
-- Aggregates: Accurate calculations from DB data.
-- Views: Role-specific filters applied.
-
-**Testing Procedures:**
-- Unit Test: Analytics queries and calculations.
-- E2E Test: Load dashboard, verify data display.
-
-- **FR-18:** Exports (e.g., CSV for metrics; PDF for full reports). [Free: Vercel for SSR dashboards]
-
-**Validation Criteria:**
-- Export Format: Valid CSV/PDF, no corruption.
-- Data: Matches dashboard view.
-
-**Testing Procedures:**
-- Unit Test: Export generators.
-- E2E Test: Trigger export, download and validate file.
+- FR-17: Role views (e.g., Super Admin: Aggregates table – States | Branches | Overdues | Completion %; SSR on existing Dashboard page). [Diagram: Analytics Service – Dashboard/Metrics; /api/analytics/route.ts]
+- FR-18: Exports (e.g., CSV for metrics; PDF for full reports). [Free: Vercel for SSR dashboards]
 
 ### 3.3 Non-Functional Requirements
 #### 3.3.1 Performance Requirements
-- System shall respond to form loads and submissions in under 2 seconds for 95% of requests under normal load (up to 50 concurrent users).
-- Scalability: Handle up to 100 concurrent users without degradation, leveraging Vercel Hobby tier limits. [Cross-ref: Section 3.3.4 Free Resource Constraints]
-- Availability: Maintain 99% uptime, monitored via free Vercel Analytics. [Cross-ref: Diagram: Warranty Layer]
+- Response time: <2s for form loads/submits; <5s for merges (up to 10 children). [Diagram: Redis Cache for sessions/rate limits]
+- Scalability: Handle 100 concurrent users (free tiers: Vercel hobby).
+- Availability: 99% uptime (leverage free hosting SLAs). [Diagram: Warranty Layer for monitoring]
 
 #### 3.3.2 Safety and Security Requirements
 - Authentication: JWT + bcrypt hashes; Rate-limit 100/min/IP (in API routes). [Diagram: Auth Service – RBAC]
@@ -407,88 +194,23 @@ Organized by module; Prioritized (Must-Have for MVP). Diagram mappings added for
 
 ### 3.4 Other Requirements
 - **Documentation:** Auto-generated API docs (Swagger-free via comments); User guide (Markdown on GitHub; Include template creation guide).
-- **Testing:** Manual for MVP; Plan for unit (Jest) + E2E (Playwright free; Test template switching in Form). Expand to include specific tests for each functional requirement as outlined above. Ensure 80% code coverage for critical paths (workflows, forms).
+- **Testing:** Manual for MVP; Plan for unit (Jest) + E2E (Playwright free; Test template switching in Form).
 - **Phased Rollout:** MVP: Core flows (FR-01 to FR-10, FR-19) in 4 weeks; AI/Alerts in Week 5; Using free GitHub Projects for tracking. Diagram integration: Validate flows against "Workflow Service" paths; Manual Vercel deploys only (e.g., vercel --prod after git push).
 
 ---
 
-## Appendix A: Use Case Diagram (Textual Representation Improved with ASCII Art)
-
-// Improved textual representation of the hierarchy and workflow:
-
-```
-[PMO] --creates--> [Request]
-              |
-              v
-[CEO NITI] --approves/rejects--> [State Advisor]
-              | (if reject: revert to PMO with notes)
-              v
-[State YP] --forwards--> [State Div HOD]
-              |
-              v
-[Div YP] --submits form--> [Data Collection]
-              | (error: invalid data -> resubmit)
-              v
-[Merge & Approve] --generates--> [Report]
-              | (if overdue: escalate alerts)
-              v
-[Super Admin] --monitors--> [Analytics Dashboard]
-```
-
+## Appendix A: Use Case Diagram (Textual)
 - Actor: PMO → Create Request → System Branches to CEO. [Diagram: PMO → CEO NITI Aayog]
-  **Steps:** 1. Initiate. 2. Validate. 3. Propagate. Error: Invalid input -> Prompt fix.
-
 - Actor: Div YP → Select Template Mode → Load Schema → Submit Form → Gen Doc. [Diagram: Div YP → Send Collected Data]
-  **Steps:** 1. Select mode. 2. Fill form. 3. Validate. 4. Generate and store doc. Decision: If validation fails, highlight errors. Error Handling: Save draft on failure.
-
 - Actor: HOD → View Children → Merge → Approve. [Diagram: State Div HOD → Run Checks]
-  **Steps:** 1. View pending. 2. Select for merge. 3. Auto-merge data. 4. Approve with notes. Decision: If merge conflicts, manual resolution. Error: Conflict -> Alert and log.
-
 - Actor: Super Admin → Create Custom Template → Query Analytics → View Alerts. [Diagram: Warranty Layer Oversight]
-  **Steps:** 1. Access editor. 2. Define schema. 3. Save and test. 4. Monitor dashboards. Error Handling: Invalid schema -> Validation errors displayed.
 
-## Appendix B: References and Dependencies
-
-#### Related Documents
-- **Product Requirements Document (PRD):** Defines high-level product features and user stories. [Location: /docs/PRD.md]
-- **Technical Architecture Document:** Details system architecture, including diagrams for services like Auth, Workflow, and AI modules. [Location: /docs/architecture.md; Cross-ref: Section 4.1]
-- **User Manual:** Guides end-users on platform usage, including login, form submission, and dashboard navigation. [Location: /docs/user_manual.md]
-- **API Documentation:** Comprehensive OpenAPI specs for all endpoints. [Generated via Swagger; Location: /docs/api.yaml]
-- **Data Model Schema:** ER diagrams and schema definitions for PostgreSQL. [Location: /docs/data_model.er]
-
-#### External Dependencies
-- **Next.js (v14+):** Full-stack framework for React-based UI and API routes. [Docs: https://nextjs.org/docs]
-- **JWT (jsonwebtoken):** For authentication token generation and validation. [Docs: https://github.com/auth0/node-jsonwebtoken]
-- **PostgreSQL (v16):** Database for storing users, requests, forms, and analytics data. [Docs: https://www.postgresql.org/docs/]
-- **Redis (Free Tier):** For token blacklisting and session management. [Docs: https://redis.io/docs/]
-- **Gemini API (Google):** For AI chatbot and content generation features. [Docs: https://ai.google.dev/docs/gemini_api]
-- **SendGrid/Twilio (Free Tiers):** For email and SMS notifications. [SendGrid Docs: https://docs.sendgrid.com/; Twilio Docs: https://www.twilio.com/docs/]
-- **Vercel:** Hosting platform for deployment, including SSR and edge functions. [Docs: https://vercel.com/docs]
-- **Other Libraries:** React Hook Form for form validation, Chart.js for dashboard visualizations, WebSocket for real-time alerts.
-
-All dependencies should be managed via package.json and pinned to compatible versions to ensure stability. For free-tier limitations, refer to respective provider docs for usage quotas.
-
-- **Documentation:** Auto-generated API docs (Swagger-free via comments); User guide (Markdown on GitHub; Include template creation guide).
-- **Testing:** Manual for MVP; Plan for unit (Jest) + E2E (Playwright free; Test template switching in Form). Expand to include specific tests for each functional requirement as outlined above. Ensure 80% code coverage for critical paths (workflows, forms).
-- **Phased Rollout:** MVP: Core flows (FR-01 to FR-10, FR-19) in 4 weeks; AI/Alerts in Week 5; Using free GitHub Projects for tracking. Diagram integration: Validate flows against "Workflow Service" paths; Manual Vercel deploys only (e.g., vercel --prod after git push).
-
----
-
-## Helpful implementation tips & gotchas
-
-* **Preserve existing UI:** Do not rename or move existing components; instead add props/hooks and new pages for Admin features.
-* **Template versioning:** include `version` in `Template` model. When form is submitted, store `templateId`+`templateVersion` to ensure reproducible docs.
-* **Schema validation:** use `ajv` to validate form JSON against template schema server-side.
-* **Avoid heavy AI calls:** always pre-check cache and use small context windows to respect Gemini free tier.
-* **GridFS file sizes:** compress DOCX/PDF before upload; keep generated doc history but archive older docs if storage approaches limit.
-* **Testing SendGrid/Twilio:** use sandbox/mocks in dev; don't spam trial accounts.
-
----
-
-If you want, next I can:
-
-* Produce the **exact TypeScript interfaces/models** for `Template`, `FormSubmission`, `WorkflowRequest`, and `GeneratedDoc` (copy/paste-ready).
-* Or generate the **API route skeleton files** (`route.ts`) with placeholder logic + comments so a backend dev can begin implementing right away.
-
-Which of those two would you like me to produce now?
-]
+## Appendix B: Free Resource Mapping (Diagram-Aligned)
+| Resource | Diagram Block | Usage | Limits | Mitigation |
+|----------|---------------|--------|---------|------------|
+| MongoDB Atlas | MongoDB Primary DB | Schemas/Forms/Requests + GridFS for Docs/Templates | 512MB | Shard by state if >10k records |
+| Vercel | Web Portal (React SPA) + API Routes | Full Next.js UI/Backend (Manual CLI Deploy) | 100GB BW/mo | Paginate heavy dashboards |
+| Gemini API | AI/ML Layer (RAG Pipeline) | Chat Queries/Auto-Gen (Key-Based) | 15 RPM free | Fallback to static summaries |
+| MongoDB GridFS | S3 Storage Equivalent (Documents/Images) | DOCX/PDF/Template Storage | Integrated in Atlas 512MB | Compress outputs |
+| SendGrid | External Services (SendGrid Email) | Alerts/Notifications | 100 emails/day | Batch non-urgent |
+| Twilio Trial | External Services (Twilio SMS) | Deadline Escalations | Unlimited dev SMS | Switch to email for prod scale |

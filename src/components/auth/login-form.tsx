@@ -13,8 +13,8 @@ export function LoginForm() {
   const { login } = useAuth();
   const { toast } = useToast();
 
-  const handleLogin = () => {
-    const success = login(email, password);
+  const handleLogin = async () => {
+    const success = await login(email, password);
     if (!success) {
       toast({
         variant: 'destructive',

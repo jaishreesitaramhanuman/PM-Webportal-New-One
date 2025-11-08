@@ -1,0 +1,82 @@
+# HierarchyFlow requirements.txt (Node project mapping)
+# This repository is a Node/Next.js application. This file documents
+# runtime and package requirements in a familiar requirements.txt format.
+
+# --- Runtime ---
+node==22.13.0
+npm==11.6.0
+
+# --- Direct Dependencies ---
+next==15.3.3
+react==18.3.1
+react-dom==18.3.1
+@genkit-ai/google-genai==1.20.0
+@hookform/resolvers==4.1.3
+@radix-ui/react-accordion==1.2.3
+@radix-ui/react-alert-dialog==1.1.6
+@radix-ui/react-avatar==1.1.3
+@radix-ui/react-checkbox==1.1.4
+@radix-ui/react-collapsible==1.1.11
+@radix-ui/react-dialog==1.1.6
+@radix-ui/react-dropdown-menu==2.1.6
+@radix-ui/react-label==2.1.2
+@radix-ui/react-menubar==1.1.6
+@radix-ui/react-popover==1.1.6
+@radix-ui/react-progress==1.1.2
+@radix-ui/react-radio-group==1.2.3
+@radix-ui/react-scroll-area==1.2.3
+@radix-ui/react-select==2.1.6
+@radix-ui/react-separator==1.1.2
+@radix-ui/react-slider==1.2.3
+@radix-ui/react-slot==1.2.3
+@radix-ui/react-switch==1.1.3
+@radix-ui/react-tabs==1.1.3
+@radix-ui/react-toast==1.2.6
+@radix-ui/react-tooltip==1.1.8
+@sendgrid/mail==7.7.0
+bcryptjs==2.4.3
+class-variance-authority==0.7.1
+clsx==2.1.1
+date-fns==3.6.0
+docxtemplater==3.45.2
+dotenv==16.5.0
+embla-carousel-react==8.6.0
+firebase==11.9.1
+genkit==1.20.0
+genkitx-ollama==1.20.0
+ioredis==5.4.1
+jsonwebtoken==9.0.2
+lucide-react==0.475.0
+mongoose==8.8.0
+next-themes==0.3.0
+patch-package==8.0.0
+pizzip==3.1.7
+react-day-picker==8.10.1
+react-hook-form==7.54.2
+recharts==2.15.1
+socket.io==4.7.5
+socket.io-client==4.7.5
+tailwind-merge==3.0.1
+tailwindcss-animate==1.0.7
+twilio==4.21.0
+uuid==9.0.1
+zod==3.24.2
+
+# --- Development/Test Requirements ---
+typescript==5
+@types/node==20
+@types/react==18
+@types/react-dom==18
+@types/bcryptjs==2.4.6
+@types/jsonwebtoken==9.0.10
+genkit-cli==1.20.0
+postcss==8
+
+# --- Environment-specific (set via .env.local) ---
+# MONGODB_URI=mongodb://localhost:27017/hierarchyflow
+# JWT_SECRET=your-secure-jwt-secret-minimum-32-chars
+# REFRESH_SECRET=your-secure-refresh-secret-minimum-32-chars
+# SENDGRID_API_KEY=your-sendgrid-key
+# TWILIO_ACCOUNT_SID=your-twilio-sid
+# TWILIO_AUTH_TOKEN=your-twilio-token
+# GOOGLE_AI_API_KEY=your-google-ai-key
