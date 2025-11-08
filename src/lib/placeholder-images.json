@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "user-1",
+      "description": "Avatar for CEO NITI",
+      "imageUrl": "https://picsum.photos/seed/1/100/100",
+      "imageHint": "professional portrait"
+    },
+    {
+      "id": "user-2",
+      "description": "Avatar for State Advisor",
+      "imageUrl": "https://picsum.photos/seed/2/100/100",
+      "imageHint": "professional portrait"
+    },
+    {
+      "id": "user-3",
+      "description": "Avatar for State YP",
+      "imageUrl": "https://picsum.photos/seed/3/100/100",
+      "imageHint": "professional portrait"
+    },
+    {
+      "id": "user-4",
+      "description": "Avatar for Division HOD",
+      "imageUrl": "https://picsum.photos/seed/4/100/100",
+      "imageHint": "professional portrait"
+    },
+    {
+      "id": "user-5",
+      "description": "Avatar for Division YP",
+      "imageUrl": "https://picsum.photos/seed/5/100/100",
+      "imageHint": "professional portrait"
+    },
+    {
+      "id": "user-6",
+      "description": "Avatar for PMO Viewer",
+      "imageUrl": "https://picsum.photos/seed/6/100/100",
+      "imageHint": "professional portrait"
+    }
+  ]
+}
