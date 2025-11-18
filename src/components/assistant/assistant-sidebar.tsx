@@ -36,7 +36,7 @@ export function AssistantSidebar({ isOpen, onOpenChange }: AssistantSidebarProps
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[400px] sm:w-[540px] bg-background p-0" side="left">
+      <SheetContent className="w-[400px] sm:w-[540px] bg-background p-0" side="right">
         <SheetHeader className="p-4 border-b">
           <SheetTitle className="flex items-center gap-2">
             <Bot />

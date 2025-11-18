@@ -37,13 +37,14 @@ export async function POST(req: NextRequest) {
         id: String(user._id),
         name: user.name,
         email: user.email,
-        roles: user.roles,
+        roles: (user.roles || []).map((r: any) => ({ role: r.role, state: r.state, division: r.branch })),
         state: user.state,
         branch: user.branch,
       },
     });
-    res.cookies.set('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 24 * 3600 });
-    res.cookies.set('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 7 * 24 * 3600 });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookies.set('accessToken', accessToken, { httpOnly: true, secure: isProd, sameSite: 'lax', maxAge: 24 * 3600 });
+    res.cookies.set('refreshToken', refreshToken, { httpOnly: true, secure: isProd, sameSite: 'lax', maxAge: 7 * 24 * 3600 });
     return res;
   }
 
@@ -51,8 +52,9 @@ export async function POST(req: NextRequest) {
     const accessToken = req.cookies.get('accessToken')?.value;
     if (accessToken) await blacklistToken(accessToken);
     const res = NextResponse.json({ ok: true });
-    res.cookies.set('accessToken', '', { httpOnly: true, secure: true, maxAge: 0 });
-    res.cookies.set('refreshToken', '', { httpOnly: true, secure: true, maxAge: 0 });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookies.set('accessToken', '', { httpOnly: true, secure: isProd, maxAge: 0 });
+    res.cookies.set('refreshToken', '', { httpOnly: true, secure: isProd, maxAge: 0 });
     return res;
   }
 

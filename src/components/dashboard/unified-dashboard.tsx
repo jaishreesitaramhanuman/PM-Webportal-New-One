@@ -195,7 +195,7 @@ export default function UnifiedDashboard() {
               A unified view of all your pending approvals and allocated tasks.
             </CardDescription>
           </div>
-          {hasRole('CEO NITI') && <NewRequestDialog />}
+          {hasRole('PMO Viewer') && <NewRequestDialog />}
         </div>
         <div className="flex flex-col md:flex-row gap-4 pt-4">
           <div className="flex-1">

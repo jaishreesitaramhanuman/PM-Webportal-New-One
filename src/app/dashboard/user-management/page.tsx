@@ -38,8 +38,8 @@ import {
   } from "@/components/ui/alert-dialog"
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { USERS, USER_ROLES, DIVISIONS, STATES } from '@/lib/data';
-import { Edit, Trash2, PlusCircle, X as XIcon } from 'lucide-react';
+import { USER_ROLES, DIVISIONS, STATES } from '@/lib/data';
+import { Edit, Trash2, PlusCircle, X as XIcon, RotateCcw, Loader2, KeyRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
@@ -55,7 +55,7 @@ import {
   } from '@/components/ui/select';
 
 export default function UserManagementPage() {
-  const { hasRole, user } = useAuth();
+  const { hasRole, user, initialized } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   
@@ -66,6 +66,12 @@ export default function UserManagementPage() {
   const [newRole, setNewRole] = useState<UserRole | ''>('');
   const [newState, setNewState] = useState('');
   const [newDivision, setNewDivision] = useState('');
+  const [isResettingDev, setIsResettingDev] = useState(false);
+  const [workingUserId, setWorkingUserId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [resetDisplay, setResetDisplay] = useState<{ password: string; until: number } | null>(null);
+  const [remaining, setRemaining] = useState(0);
 
   const formatRole = (role: UserRoleAssignment) => {
     let formatted = role.role;
@@ -80,21 +86,54 @@ export default function UserManagementPage() {
   };
 
   useEffect(() => {
+    if (!initialized) return;
     if (!user) {
-        router.push('/');
-        return;
+      router.push('/');
+      return;
     }
     if (!hasRole('Super Admin')) {
       router.push('/dashboard');
     }
-  }, [hasRole, user, router]);
+  }, [initialized, hasRole, user, router]);
 
-  const handleAddUser = () => {
-    toast({
-      title: 'User Created',
-      description: 'The new user has been successfully created.',
-    });
-    setAddUserDialogOpen(false);
+  useEffect(() => {
+    if (!initialized || !user || !hasRole('Super Admin')) return;
+    (async () => {
+      try {
+        const res = await fetch('/api/users');
+        if (res.ok) {
+          const data = await res.json();
+          const list: User[] = (data.users || []).map((u: any) => ({ id: u.id, name: u.name, email: u.email, roles: u.roles, avatarUrl: u.avatarUrl }));
+          setUsers(list.filter(u => !u.roles.some(r => r.role === 'Super Admin')));
+        }
+      } catch {}
+    })();
+  }, [initialized, user, hasRole]);
+
+  const handleAddUser = async () => {
+    const nameInput = document.getElementById('name') as HTMLInputElement | null;
+    const name = nameInput?.value?.trim() || '';
+    if (!name) return;
+    setIsCreating(true);
+    try {
+      const res = await fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
+      const data = await res.json();
+      if (res.ok) {
+        const newUser: User = { id: data.user.id, name: data.user.name, email: data.user.email, roles: [], avatarUrl: data.user.avatarUrl };
+        setUsers(prev => [newUser, ...prev]);
+        toast({ title: 'User Created', description: `Email: ${data.user.email} | Temp: ${data.tempPassword}` });
+        setSelectedUser(newUser);
+        setEditedRoles([]);
+        setAddUserDialogOpen(false);
+        setEditUserDialogOpen(true);
+      } else {
+        toast({ variant: 'destructive', title: 'Create Failed', description: data.error || 'Not available in demo mode.' });
+      }
+    } catch {
+      toast({ variant: 'destructive', title: 'Network Error', description: 'Could not create user.' });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const handleDeleteUser = () => {
@@ -105,21 +144,75 @@ export default function UserManagementPage() {
       });
   }
 
+  const handleResetDevUsers = async () => {
+    setIsResettingDev(true);
+    try {
+      const res = await fetch('/api/dev/seed', { method: 'POST' });
+      if (res.ok) {
+        toast({ title: 'Reset Complete', description: 'Dev users and demo data refreshed.' });
+      } else {
+        toast({ variant: 'destructive', title: 'Reset Failed', description: 'Operation not permitted.' });
+      }
+    } catch {
+      toast({ variant: 'destructive', title: 'Network Error', description: 'Could not reset dev users.' });
+    } finally {
+      setIsResettingDev(false);
+    }
+  }
+
+  const handleResetPassword = async (u: User) => {
+    setWorkingUserId(u.id);
+    try {
+      const res = await fetch(`/api/users/${u.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'reset-password' }) });
+      const data = await res.json();
+      if (res.ok) {
+        try { await navigator.clipboard.writeText(data.tempPassword); } catch {}
+        const until = Date.now() + 15000;
+        setResetDisplay({ password: data.tempPassword, until });
+        setRemaining(15);
+        toast({ title: 'Password Reset', description: `Temp password copied to clipboard` });
+      } else {
+        toast({ variant: 'destructive', title: 'Reset Failed', description: data.error || 'Not available in demo mode.' });
+      }
+    } catch {
+      toast({ variant: 'destructive', title: 'Network Error', description: 'Could not reset password.' });
+    } finally {
+      setWorkingUserId(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!resetDisplay) return;
+    const id = setInterval(() => {
+      const secs = Math.max(0, Math.ceil((resetDisplay.until - Date.now()) / 1000));
+      setRemaining(secs);
+      if (secs <= 0) {
+        setResetDisplay(null);
+        clearInterval(id);
+      }
+    }, 250);
+    return () => clearInterval(id);
+  }, [resetDisplay]);
+
   const handleEditUserClick = (user: User) => {
     setSelectedUser(user);
     setEditedRoles([...user.roles]);
     setEditUserDialogOpen(true);
   }
 
-  const handleSaveUserChanges = () => {
-    if (selectedUser) {
-        // Here you would typically call an API to save the changes.
-        // For now, we'll just show a toast.
-        console.log('Saving changes for user:', selectedUser.id, 'New roles:', editedRoles);
-        toast({
-            title: 'User Updated',
-            description: `${selectedUser.name}'s roles have been updated.`
-        });
+  const handleSaveUserChanges = async () => {
+    if (!selectedUser) return;
+    try {
+      const res = await fetch(`/api/users/${selectedUser.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roles: editedRoles }) });
+      const data = await res.json();
+      if (res.ok) {
+        setUsers(prev => prev.map(u => (u.id === selectedUser.id ? { ...u, roles: data.user.roles } : u)));
+        toast({ title: 'User Updated', description: `${selectedUser.name}'s roles have been updated.` });
+      } else {
+        toast({ variant: 'destructive', title: 'Update Failed', description: data.error || 'Not available in demo mode.' });
+      }
+    } catch {
+      toast({ variant: 'destructive', title: 'Network Error', description: 'Could not update roles.' });
     }
     setEditUserDialogOpen(false);
     setSelectedUser(null);
@@ -150,6 +243,13 @@ export default function UserManagementPage() {
   }
 
 
+  if (!initialized) {
+    return (
+        <div className="flex h-screen items-center justify-center">
+            <p>Loading...</p>
+        </div>
+    );
+  }
   if (!user || !hasRole('Super Admin')) {
     return (
         <div className="flex h-screen items-center justify-center">
@@ -163,6 +263,19 @@ export default function UserManagementPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {resetDisplay && (
+        <div className="fixed top-4 right-4 z-50">
+          <Card>
+            <CardHeader>
+              <CardTitle>Temporary Password</CardTitle>
+              <CardDescription>Auto-dismiss in {remaining}s</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="font-mono text-sm break-all">{resetDisplay.password}</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       <h1 className="text-2xl md:text-3xl font-bold tracking-tight">User Management</h1>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -172,10 +285,15 @@ export default function UserManagementPage() {
                     Manage user roles, states, and divisions.
                 </CardDescription>
             </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={handleResetDevUsers} disabled={isResettingDev}>
+                {isResettingDev ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                Reset Dev Users
+              </Button>
             <Dialog open={isAddUserDialogOpen} onOpenChange={setAddUserDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button size="sm">
-                        <PlusCircle className="mr-2 h-4 w-4" />
+                    <Button size="sm" disabled={isCreating}>
+                        {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
                         Add New User
                     </Button>
                 </DialogTrigger>
@@ -192,19 +310,20 @@ export default function UserManagementPage() {
                             <Input id="name" placeholder="John Doe" className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="email" className="text-right">Email</Label>
-                            <Input id="email" type="email" placeholder="john.d@example.com" className="col-span-3" />
+                            <Label className="text-right">Email</Label>
+                            <div className="col-span-3 text-sm text-muted-foreground">Auto-generated from name (e.g., first.last@gov.in)</div>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="password" className="text-right">Password</Label>
-                            <Input id="password" type="password" placeholder="••••••••" className="col-span-3" />
+                            <Label className="text-right">Password</Label>
+                            <div className="col-span-3 text-sm text-muted-foreground">Temporary password generated by system</div>
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit" onClick={handleAddUser}>Create User</Button>
+                        <Button type="submit" onClick={handleAddUser} disabled={isCreating}>{isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Create User</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -216,7 +335,7 @@ export default function UserManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {USERS.filter(u => !u.roles.some(r => r.role === 'Super Admin')).map((u) => (
+              {users.map((u) => (
                 <TableRow key={u.id}>
                   <TableCell>
                     <div className="font-medium">{u.name}</div>
@@ -235,6 +354,10 @@ export default function UserManagementPage() {
                   <TableCell className="text-right space-x-2">
                     <Button size="sm" variant="outline" onClick={() => handleEditUserClick(u)}>
                       <Edit className="mr-2 h-4 w-4" /> Edit
+                    </Button>
+                    <Button size="sm" variant="secondary" onClick={() => handleResetPassword(u)} disabled={workingUserId === u.id}>
+                      {workingUserId === u.id ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <KeyRound className="mr-2 h-4 w-4" />}
+                      Reset Password
                     </Button>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>

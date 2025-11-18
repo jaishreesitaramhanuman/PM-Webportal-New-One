@@ -3,19 +3,21 @@
 
 import { USERS, User } from '@/lib/data';
 import { useRouter } from 'next/navigation';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   hasRole: (role: string) => boolean;
+  initialized: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [initialized, setInitialized] = useState(false);
   const router = useRouter();
 
   const login = async (email: string, password: string) => {
@@ -62,7 +64,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('/api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'logout' }) });
+    } catch {}
     setUser(null);
     router.push('/');
   };
@@ -71,8 +76,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return user?.roles.some(r => r.role === role) || false;
   }
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/session', { method: 'GET' });
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled && data.user) {
+            const userFromApi: User = {
+              id: data.user.id,
+              name: data.user.name,
+              email: data.user.email,
+              roles: data.user.roles,
+              avatarUrl: data.user.avatarUrl ?? 'https://picsum.photos/seed/100/100',
+            };
+            setUser(userFromApi);
+          }
+        }
+      } catch {}
+      if (!cancelled) setInitialized(true);
+    })();
+    return () => { cancelled = true };
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, hasRole }}>
+    <AuthContext.Provider value={{ user, login, logout, hasRole, initialized }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,15 +7,18 @@ import { useRouter } from "next/navigation";
 import UserManagementPage from "./user-management/page";
 
 export default function Dashboard() {
-  const { user, hasRole } = useAuth();
+  const { user, hasRole, initialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-        router.push('/');
+    if (initialized && !user) {
+      router.push('/');
     }
-  }, [user, router]);
+  }, [initialized, user, router]);
 
+  if (!initialized) {
+    return <div>Loading...</div>;
+  }
   if (!user) {
     return <div>Loading...</div>;
   }

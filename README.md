@@ -193,7 +193,7 @@ Static Pages:       2.52 kB (115 kB total)
 
 ### **For Full Functionality:**
 1. **Configure MongoDB:** Set MONGODB_URI environment variable
-2. **Seed Database:** Import test data with hashed passwords
+and 2. **Seed Database:** Import test data with hashed passwords
 3. **Configure Services:** Set up SendGrid, Twilio, Gemini API
 4. **Security Hardening:** Remove test files, set secure secrets
 

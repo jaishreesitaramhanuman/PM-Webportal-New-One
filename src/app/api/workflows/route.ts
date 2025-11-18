@@ -12,7 +12,7 @@ import { WorkflowRequest } from '@/models/request';
 
 export async function POST(req: NextRequest) {
   const user = await authenticateRequest(req);
-  if (!requireRoles(user, ['PMO Viewer', 'CEO NITI'])) {
+  if (!requireRoles(user, ['PMO Viewer'])) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const json = await req.json();

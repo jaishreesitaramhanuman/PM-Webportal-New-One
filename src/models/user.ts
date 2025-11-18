@@ -23,6 +23,7 @@ const UserSchema = new Schema(
     roles: { type: [RoleAssignmentSchema], default: [] },
     state: { type: String },
     branch: { type: String },
+    status: { type: String, enum: ['pending', 'active'], default: 'pending' },
   },
   { timestamps: true }
 );

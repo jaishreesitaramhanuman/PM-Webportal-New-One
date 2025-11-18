@@ -29,6 +29,7 @@ export function RequestView({ request }: RequestViewProps) {
     const [briefingNote, setBriefingNote] = useState<string | null>(null);
     const [inconsistencyReport, setInconsistencyReport] = useState<string | null>(null);
     const [summary, setSummary] = useState<string | null>(null);
+    const [submissionText, setSubmissionText] = useState<string>("");
 
     const [isBriefingLoading, setIsBriefingLoading] = useState(false);
     const [isInconsistencyLoading, setIsInconsistencyLoading] = useState(false);
@@ -55,11 +56,35 @@ export function RequestView({ request }: RequestViewProps) {
     }, [request.submittedData?.text]);
 
 
-    const handleAction = (action: 'submit' | 'approve' | 'reject') => {
-        toast({
-            title: `Action: ${action.charAt(0).toUpperCase() + action.slice(1)}`,
-            description: `The request has been ${action === 'submit' ? 'submitted' : action} and forwarded.`,
-        });
+    const handleAction = async (action: 'submit' | 'approve' | 'reject') => {
+        if (action === 'submit') {
+            try {
+                const tplRes = await fetch(`/api/templates?mode=${encodeURIComponent(request.division)}`);
+                if (!tplRes.ok) { toast({ variant: 'destructive', title: 'Template Missing', description: 'No default template for division.' }); return; }
+                const tpl = await tplRes.json();
+                const res = await fetch('/api/forms', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ requestId: request.id, templateMode: request.division, templateId: tpl._id, branch: request.division, state: request.state, data: { text: submissionText } }) });
+                if (res.ok) {
+                    toast({ title: 'Submitted', description: 'Division document submitted for approval.' });
+                } else {
+                    const data = await res.json();
+                    toast({ variant: 'destructive', title: 'Submit Failed', description: data.error || 'Could not submit.' });
+                }
+            } catch {
+                toast({ variant: 'destructive', title: 'Network Error', description: 'Could not submit.' });
+            }
+            return;
+        }
+        try {
+            const res = await fetch('/api/workflows', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: request.id, action }) });
+            if (res.ok) {
+                toast({ title: `Action: ${action}`, description: 'Request updated.' });
+            } else {
+                const data = await res.json();
+                toast({ variant: 'destructive', title: 'Update Failed', description: data.error || 'Could not update request.' });
+            }
+        } catch {
+            toast({ variant: 'destructive', title: 'Network Error', description: 'Could not update request.' });
+        }
     };
 
     const handleGenerateBriefing = async () => {
@@ -175,7 +200,7 @@ export function RequestView({ request }: RequestViewProps) {
                         </Accordion>
 
                         <div className="pt-4 space-y-4">
-                            <Textarea placeholder="Type your overall summary report here..." rows={4} />
+                            <Textarea placeholder="Type your overall summary report here..." rows={4} value={submissionText} onChange={(e) => setSubmissionText(e.target.value)} />
                              <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <Label htmlFor="files">Attach Files</Label>
                                 <Input id="files" type="file" multiple />
