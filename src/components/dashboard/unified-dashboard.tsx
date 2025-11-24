@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { Inbox } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -194,7 +195,7 @@ export default function UnifiedDashboard() {
     const states = new Set<string>();
     const roles = new Set<string>();
     const divisions = new Set<string>();
-    user.roles.forEach(r => {
+    user.roles.forEach((r: UserRoleAssignment) => {
         roles.add(r.role);
         if (r.state) states.add(r.state);
         if (r.division) divisions.add(r.division);
@@ -256,7 +257,7 @@ export default function UnifiedDashboard() {
         // If user is Division HOD or Division YP, check if their division is in assignments
         // Each division works independently, so check if this user's division has an assignment
         if (!isAssignee && (hasRole('Division HOD') || hasRole('Division YP'))) {
-          const userDivision = user.roles.find((role: any) => 
+          const userDivision = user.roles.find((role: UserRoleAssignment) => 
             (role.role === 'Division HOD' || role.role === 'Division YP') && 
             role.state === r.state
           )?.division;
@@ -287,7 +288,7 @@ export default function UnifiedDashboard() {
 
         // If a role filter is applied, check if the user has that role for the request's context
         if (roleFilter !== 'all') {
-            const hasMatchingRole = user.roles.some(assignment => 
+            const hasMatchingRole = user.roles.some((assignment: UserRoleAssignment) => 
                 assignment.role === roleFilter &&
                 (!assignment.state || assignment.state === r.state) &&
                 (!assignment.division || assignment.division === r.division)
@@ -375,16 +376,26 @@ export default function UnifiedDashboard() {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={6} className="h-24 text-center">
-              No tasks found for the selected filters.
+            <TableCell colSpan={6} className="h-64 text-center">
+              <div className="flex flex-col items-center justify-center space-y-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <Inbox className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-lg font-medium text-muted-foreground">No tasks found</p>
+                  <p className="text-sm text-muted-foreground">
+                    {myTasks.length === 0 
+                      ? "You don't have any assigned tasks yet." 
+                      : "No tasks match the selected filters."}
+                  </p>
+                </div>
+              </div>
             </TableCell>
           </TableRow>
         )}
       </TableBody>
     </Table>
   );
-
-  if (!user) return null;
 
   return (
     <Card>

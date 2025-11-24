@@ -160,33 +160,51 @@ export default function NewRequestDialog({ onRequestCreated }: NewRequestDialogP
               <Label htmlFor="due-date" className="text-right">
                 Due Date *
               </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal col-span-3",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date (min 3 days ahead)</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    disabled={(date) => {
-                      const minDate = new Date()
-                      minDate.setDate(minDate.getDate() + 3)
-                      return date < minDate
-                    }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="col-span-3 flex gap-2">
+                <Input
+                  id="due-date"
+                  type="date"
+                  className="flex-1"
+                  data-testid="date-input"
+                  min={(() => {
+                    const minDate = new Date()
+                    minDate.setDate(minDate.getDate() + 3)
+                    return minDate.toISOString().split('T')[0]
+                  })()}
+                  value={date ? date.toISOString().split('T')[0] : ''}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setDate(new Date(e.target.value + 'T12:00:00'))
+                    } else {
+                      setDate(undefined)
+                    }
+                  }}
+                />
+                <Popover modal={true}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      size="icon"
+                      data-testid="date-picker-trigger"
+                    >
+                      <CalendarIcon className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" data-testid="calendar-content">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      disabled={(date) => {
+                        const minDate = new Date()
+                        minDate.setDate(minDate.getDate() + 3)
+                        return date < minDate
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           </div>
           <DialogFooter>

@@ -3,7 +3,7 @@ import { connectDB } from '@/lib/db';
 import { authenticateRequest, requireRoles } from '@/lib/auth';
 import { WorkflowRequest } from '@/models/request';
 import { FormSubmission } from '@/models/form';
-import mongoose from 'mongoose';
+import mongoose, { ConnectionStates } from 'mongoose';
 
 /**
  * DELETE /api/workflows/[id]
@@ -28,9 +28,9 @@ export async function DELETE(
 
   try {
     await connectDB();
-    if (mongoose.connection.readyState !== 1) {
+    if ((mongoose.connection.readyState as number) !== 1) {
       await new Promise(resolve => setTimeout(resolve, 200));
-      if (mongoose.connection.readyState !== 1) {
+      if ((mongoose.connection.readyState as number) !== 1) {
         return NextResponse.json({ error: 'Database not available' }, { status: 503 });
       }
     }

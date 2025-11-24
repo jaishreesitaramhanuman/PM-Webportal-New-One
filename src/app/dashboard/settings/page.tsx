@@ -68,7 +68,7 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <Label>Roles</Label>
                  <div className="flex flex-wrap gap-1 rounded-lg bg-muted p-2 min-h-[40px]">
-                    {user?.roles.map((role, index) => (
+                    {user?.roles.map((role: UserRoleAssignment, index: number) => (
                         <Badge key={index} variant="secondary" className="text-sm">
                             {formatRole(role)}
                         </Badge>

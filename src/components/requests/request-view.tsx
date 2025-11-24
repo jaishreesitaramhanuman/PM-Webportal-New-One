@@ -8,7 +8,7 @@ import { AuditTrail } from "./audit-trail";
 import { useAuth } from "@/hooks/use-auth";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { Paperclip, Send, ThumbsDown, ThumbsUp, Lightbulb, FileWarning, Edit, Save, X, Merge } from "lucide-react";
+import { Paperclip, Send, ThumbsDown, ThumbsUp, Lightbulb, FileWarning, Edit, Save, X, Merge, FileText } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
@@ -18,6 +18,7 @@ import { generateBriefingNotes } from "@/ai/flows/generate-briefing-notes";
 import { detectDataInconsistencies } from "@/ai/flows/data-inconsistency-detection";
 import { Skeleton } from "../ui/skeleton";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { useRouter } from 'next/navigation';
 
 interface RequestViewProps {
     request: Request;
@@ -26,6 +27,7 @@ interface RequestViewProps {
 export function RequestView({ request }: RequestViewProps) {
     const { user, hasRole } = useAuth();
     const { toast } = useToast();
+    const router = useRouter();
     const [briefingNote, setBriefingNote] = useState<string | null>(null);
     const [inconsistencyReport, setInconsistencyReport] = useState<string | null>(null);
     const [summary, setSummary] = useState<string | null>(null);
@@ -382,8 +384,15 @@ export function RequestView({ request }: RequestViewProps) {
             return (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Submit Information</CardTitle>
-                        <CardDescription>Please provide the requested information and attach relevant files.</CardDescription>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <CardTitle>Submit Information</CardTitle>
+                                <CardDescription>Please provide the requested information and attach relevant files.</CardDescription>
+                            </div>
+                            <Button variant="outline" onClick={() => router.push(`/dashboard/forms/rich-text?requestId=${request.id}&title=${encodeURIComponent(request.title)}`)}>
+                                <FileText className="mr-2 h-4 w-4" /> Use Rich Text Editor
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <Accordion type="multiple" className="w-full">

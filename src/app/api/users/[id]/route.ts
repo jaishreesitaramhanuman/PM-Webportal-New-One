@@ -4,7 +4,7 @@ import { User } from '@/models/user'
 import { authenticateRequest, requireRoles } from '@/lib/auth'
 import { randomBytes } from 'crypto'
 import bcrypt from 'bcryptjs'
-import mongoose from 'mongoose'
+import mongoose, { ConnectionStates } from 'mongoose'
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await authenticateRequest(req)
@@ -17,9 +17,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     await connectDB()
     
     // Check if MongoDB is actually connected
-    if (mongoose.connection.readyState !== 1) {
+    if ((mongoose.connection.readyState as number) !== 1) {
       await new Promise(resolve => setTimeout(resolve, 200))
-      if (mongoose.connection.readyState !== 1) {
+      if ((mongoose.connection.readyState as number) !== 1) {
         return NextResponse.json({ error: 'Database not available' }, { status: 503 })
       }
     }

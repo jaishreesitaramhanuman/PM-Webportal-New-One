@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import Twilio from 'twilio';
+import twilio from 'twilio';
 
 /**
  * Notifications Service
@@ -11,7 +11,7 @@ const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN || '';
 const TWILIO_FROM = process.env.TWILIO_FROM || '';
 
 if (SENDGRID_KEY) sgMail.setApiKey(SENDGRID_KEY);
-const twilioClient = TWILIO_SID && TWILIO_TOKEN ? new Twilio(TWILIO_SID, TWILIO_TOKEN) : null;
+const twilioClient = TWILIO_SID && TWILIO_TOKEN ? twilio(TWILIO_SID, TWILIO_TOKEN) : null;
 
 export async function sendEmail(to: string, subject: string, text: string) {
   if (!SENDGRID_KEY) {

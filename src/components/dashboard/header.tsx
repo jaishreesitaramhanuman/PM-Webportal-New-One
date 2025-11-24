@@ -48,7 +48,7 @@ export default function Header() {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+          <Button variant="ghost" className="relative h-9 w-9 rounded-full" data-testid="user-menu-trigger">
             <Avatar className="h-9 w-9">
               <AvatarImage src={user?.avatarUrl} alt={user?.name} data-ai-hint="professional portrait" />
               <AvatarFallback>{user ? getInitials(user.name) : '...'}</AvatarFallback>
@@ -60,7 +60,7 @@ export default function Header() {
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">{user?.name}</p>
               <div className="flex flex-wrap gap-1 mt-2">
-                {user?.roles.map((role, index) => (
+                {user?.roles.map((role: UserRoleAssignment, index: number) => (
                   <Badge key={index} variant="secondary" className="text-xs">
                     {formatRole(role)}
                   </Badge>
@@ -69,7 +69,7 @@ export default function Header() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logout}>
+          <DropdownMenuItem onClick={logout} data-testid="logout-button">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>

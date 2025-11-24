@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
   const parsed = Schema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: parsed.error.format() }, { status: 400 })
   const toRole = parsed.data.toRole
-  const actorRoles = (actor.roles || []).map((r: any) => r.role)
-  const canForward = actorRoles.some((r) => (TransitionMap[r] || []).includes(toRole))
+  const actorRoles: string[] = (actor.roles || []).map((r: any) => r.role)
+  const canForward = actorRoles.some((r: string) => (TransitionMap[r] || []).includes(toRole))
   if (!canForward) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   await connectDB()
   const reqDoc = await WorkflowRequest.findById(parsed.data.requestId)

@@ -6,7 +6,7 @@ import { CreateRequestSchema } from '@/lib/validation';
 import { WorkflowRequest } from '@/models/request';
 import { FormSubmission } from '@/models/form';
 import { mergeForms } from '@/lib/mergeEngine';
-import mongoose from 'mongoose';
+import mongoose, { ConnectionStates } from 'mongoose';
 
 /**
  * /api/workflows
@@ -16,16 +16,12 @@ import mongoose from 'mongoose';
 export async function POST(req: NextRequest) {
   const user = await authenticateRequest(req);
   if (!user) {
-    console.error('❌ No user authenticated');
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  
-  const userRoles = (user.roles || []).map((r: any) => r.role);
-  console.log('🔍 User roles:', userRoles);
-  console.log('🔍 User email:', user.email);
-  
-  if (!requireRoles(user, ['PMO Viewer'])) {
-    console.error('❌ User does not have PMO Viewer role. User roles:', userRoles);
+
+  // Only 'State Advisor', 'Super Admin', or 'PMO Viewer' can create requests
+  if (!requireRoles(user, ['State Advisor', 'Super Admin', 'PMO Viewer'])) {
+    console.error('❌ User does not have PMO Viewer role. User roles:', (user.roles || []).map((r: any) => r.role));
     return NextResponse.json({ error: 'Forbidden: PMO Viewer role required' }, { status: 403 });
   }
   const json = await req.json();
@@ -44,10 +40,10 @@ export async function POST(req: NextRequest) {
     await connectDB();
     
     // Wait a moment to ensure connection is fully established
-    if (mongoose.connection.readyState !== 1) {
+    if ((mongoose.connection.readyState as number) !== 1) {
       // If not connected, wait a bit and check again
       await new Promise(resolve => setTimeout(resolve, 200));
-      if (mongoose.connection.readyState !== 1) {
+      if ((mongoose.connection.readyState as number) !== 1) {
         throw new Error(`MongoDB not connected (readyState: ${mongoose.connection.readyState})`);
       }
     }
@@ -92,10 +88,10 @@ export async function GET(req: NextRequest) {
     await connectDB();
     
     // Wait a moment to ensure connection is fully established
-    if (mongoose.connection.readyState !== 1) {
+    if ((mongoose.connection.readyState as number) !== 1) {
       // If not connected, wait a bit and check again
       await new Promise(resolve => setTimeout(resolve, 200));
-      if (mongoose.connection.readyState !== 1) {
+      if ((mongoose.connection.readyState as number) !== 1) {
         throw new Error(`MongoDB not connected (readyState: ${mongoose.connection.readyState})`);
       }
     }
@@ -169,9 +165,9 @@ export async function PATCH(req: NextRequest) {
   
   try {
     await connectDB();
-    if (mongoose.connection.readyState !== 1) {
+    if ((mongoose.connection.readyState as number) !== 1) {
       await new Promise(resolve => setTimeout(resolve, 200));
-      if (mongoose.connection.readyState !== 1) {
+      if ((mongoose.connection.readyState as number) !== 1) {
         return NextResponse.json({ error: 'Database not available' }, { status: 503 });
       }
     }
@@ -247,6 +243,7 @@ export async function PATCH(req: NextRequest) {
           if (advisor) nextAssigneeId = advisor._id;
         }
         nextStatus = 'in-progress';
+        nextStatus = 'in-progress';
       } else if (userRoles.includes('State Advisor')) {
         // State Advisor approves, goes to State YP for the state
         const state = userState || doc.targets?.states?.[0];
@@ -256,6 +253,46 @@ export async function PATCH(req: NextRequest) {
             'roles.state': state 
           });
           if (stateYP) nextAssigneeId = stateYP._id;
+
+          // GENERATE DIVISION ASSIGNMENTS
+          // When State Advisor approves, we fan out to divisions
+          if (doc.targets?.branches?.length > 0) {
+            const { User } = await import('@/models/user');
+            const assignments = [];
+            
+            for (const branch of doc.targets.branches) {
+              // Find HOD for this branch/state
+              const hod = await User.findOne({
+                'roles.role': 'Division HOD',
+                'roles.state': state,
+                'roles.branch': branch
+              });
+              
+              // Find YP for this branch/state
+              const yp = await User.findOne({
+                'roles.role': 'Division YP',
+                'roles.state': state,
+                'roles.branch': branch
+              });
+              
+              if (hod) {
+                assignments.push({
+                  division: branch,
+                  divisionHODId: hod._id,
+                  divisionYPId: yp?._id, // Optional
+                  status: 'pending',
+                  deadline: doc.deadline
+                });
+              }
+            }
+            
+            if (assignments.length > 0) {
+              doc.divisionAssignments = assignments;
+              console.log(`✅ Generated ${assignments.length} division assignments for ${state}`);
+            } else {
+              console.warn(`⚠️ No Division HODs found for branches: ${doc.targets.branches.join(', ')} in ${state}`);
+            }
+          }
         }
         nextStatus = 'in-progress';
       } else if (userRoles.includes('State YP')) {
@@ -414,12 +451,12 @@ export async function PATCH(req: NextRequest) {
       if (historyNotes && !historyNotes.startsWith(divisionPrefix)) {
         historyNotes = divisionPrefix + historyNotes;
       } else if (!historyNotes) {
-        historyNotes = divisionPrefix + (action === 'approve' ? 'approved' : action === 'declined&improved' ? 'declined & improved' : 'updated');
+        historyNotes = divisionPrefix + (action === 'approve' ? 'approved' : action === 'decline&improve' ? 'declined & improved' : 'updated');
       }
     }
     
     doc.history.push({ 
-      action: action === 'approve' ? 'approved' : 'declined&improved', 
+      action: action === 'approve' ? 'approved' : 'decline&improve', 
       userId: user!._id, 
       timestamp: new Date(), 
       notes: historyNotes || undefined
@@ -433,4 +470,3 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: error.message || 'Failed to update workflow' }, { status: 500 });
   }
 }
-

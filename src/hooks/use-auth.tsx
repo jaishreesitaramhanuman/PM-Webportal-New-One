@@ -1,7 +1,8 @@
 
 'use client';
 
-import { USERS, User } from '@/lib/data';
+import { USERS } from '@/lib/data';
+import type { User, UserRoleAssignment } from '@/types';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           avatarUrl: data.user.avatarUrl ?? 'https://picsum.photos/seed/100/100',
         };
         setUser(userFromApi);
-        if (userFromApi.roles.some(r => r.role === 'Super Admin')) {
+        if (userFromApi.roles.some((r: UserRoleAssignment) => r.role === 'Super Admin')) {
           router.push('/dashboard/user-management');
         } else {
           router.push('/dashboard');
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const hasRole = (role: string) => {
-    return user?.roles.some(r => r.role === role) || false;
+    return user?.roles.some((r: UserRoleAssignment) => r.role === role) || false;
   }
 
   useEffect(() => {

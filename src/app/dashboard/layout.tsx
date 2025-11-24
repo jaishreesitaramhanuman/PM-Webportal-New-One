@@ -16,7 +16,7 @@ import { SidebarNav } from '@/components/dashboard/sidebar-nav';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { AssistantSidebar } from '@/components/assistant/assistant-sidebar';
-import { Bot } from 'lucide-react';
+import { Bot, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -46,13 +46,35 @@ export default function DashboardLayout({
         <div className="flex">
             <Sidebar>
                 <SidebarHeader>
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="shrink-0 md:hidden">
-                    <Icons.logo className="size-5" />
-                    </Button>
-                    <div className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
-                    <Icons.logo className="h-6 w-6" />
-                    <span className="font-semibold text-lg">VisitWise</span>
+                <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="icon" className="shrink-0 md:hidden">
+                            <Icons.logo className="size-5" />
+                        </Button>
+                        <div className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
+                            <Icons.logo className="h-6 w-6" />
+                            <span className="font-semibold text-lg">VisitWise</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 group-data-[collapsible=icon]:hidden">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => router.back()}
+                            title="Go back"
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => router.forward()}
+                            title="Go forward"
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
                     </div>
                 </div>
                 </SidebarHeader>

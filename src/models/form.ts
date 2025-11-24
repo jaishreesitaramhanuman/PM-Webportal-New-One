@@ -16,12 +16,16 @@ const AttachmentSchema = new Schema(
 const FormSubmissionSchema = new Schema(
   {
     requestId: { type: Schema.Types.ObjectId, ref: 'WorkflowRequest', required: true },
-    templateId: { type: Schema.Types.ObjectId, ref: 'Template', required: true },
+    templateId: { type: Schema.Types.ObjectId, ref: 'Template' }, // Optional for rich-text forms
     templateMode: { type: String, required: true },
     branch: { type: String },
     state: { type: String },
     submittedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     data: { type: Schema.Types.Mixed, required: true },
+    // NEW: Rich text form support
+    formType: { type: String, enum: ['json', 'rich-text'], default: 'json' },
+    richTextContent: { type: String }, // HTML content from Tiptap editor
+    richTextTemplateId: { type: Schema.Types.ObjectId, ref: 'RichTextTemplate' },
     attachments: { type: [AttachmentSchema], default: [] },
     status: {
       type: String,
